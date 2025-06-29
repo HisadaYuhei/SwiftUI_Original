@@ -55,12 +55,12 @@ struct QuizView: View {
                         .padding(.horizontal)
                         .frame(minHeight:100,alignment: .center)
 
-                    Text("\(timeRemaining)")
-                        .font(.system(size: 50, weight: .medium))
-                        .foregroundStyle(timeRemaining <= 3 ? Color.red : Color.white)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal)
-                        .frame(minHeight: 100, alignment: .center)
+//                    Text("\(timeRemaining)")
+//                        .font(.system(size: 50, weight: .medium))
+//                        .foregroundStyle(timeRemaining <= 3 ? Color.red : Color.white)
+//                        .multilineTextAlignment(.center)
+//                        .padding(.horizontal)
+//                        .frame(minHeight: 100, alignment: .center)
 
                     
                     Text("秒")
