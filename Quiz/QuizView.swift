@@ -17,6 +17,9 @@ struct QuizView: View {
     @State private var currentQuestionIndex = 0
     @State private var isCorrect: Bool = false
     @State private var isShowingFeedback = false
+    @State private var timeRemaining: Int = 10
+    @State private var timer: Timer? = nil
+
     
     var currentQuestion: QuizItem {
         quizItems[currentQuestionIndex]
@@ -42,6 +45,31 @@ struct QuizView: View {
                     .frame(minHeight:100,alignment: .center)
                 
                 Spacer()
+                
+                //残り時間
+                HStack{
+                    Text("残り時間：")
+                        .font(.system(size:30,weight:.medium))
+                        .foregroundStyle(Color.white)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
+                        .frame(minHeight:100,alignment: .center)
+
+                    Text("\(timeRemaining)")
+                        .font(.system(size: 50, weight: .medium))
+                        .foregroundStyle(timeRemaining <= 3 ? Color.red : Color.white)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
+                        .frame(minHeight: 100, alignment: .center)
+
+                    
+                    Text("秒")
+                        .font(.system(size:30,weight:.medium))
+                        .foregroundStyle(Color.white)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
+                        .frame(minHeight:100,alignment: .center)
+                }
                 
                 // Feedback Message Area
                 Text(isCorrect ? "正解！" : "不正解... 正解は「\(currentQuestion.options[currentQuestion.correctAnswerIndex])」")
@@ -76,33 +104,48 @@ struct QuizView: View {
             .padding()
         }
         .onAppear {
-            // QuizViewが表示された際に、問題総数をContentViewに伝える
             totalQuestions = quizItems.count
+            startTimer()
         }
     }
     // ボタンがタップされたときの処理
-    func answerTapped(index:Int){
+    func answerTapped(index: Int) {
+        timer?.invalidate()
         isShowingFeedback = true
-        
-        if index ==  currentQuestion.correctAnswerIndex{
+
+        if index == currentQuestion.correctAnswerIndex {
             isCorrect = true
             score += 1
         } else {
             isCorrect = false
         }
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
             isShowingFeedback = false
-            
+
             if currentQuestionIndex < quizItems.count - 1 {
                 currentQuestionIndex += 1
-                isShowingFeedback = false
+                startTimer() // 次の問題用タイマー開始
             } else {
-                // 全問終了
                 currentScreen = .result
             }
         }
     }
+
+    
+    func startTimer() {
+        timer?.invalidate()  // 既存のタイマー停止
+        timeRemaining = 10
+        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+            if timeRemaining > 0 {
+                timeRemaining -= 1
+            } else {
+                timer?.invalidate()
+                answerTapped(index: -1) // -1は「時間切れ」の特別処理に使う
+            }
+        }
+    }
+
     
 }
 
