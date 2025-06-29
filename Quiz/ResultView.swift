@@ -24,6 +24,13 @@ struct ResultView: View {
                     Text("\(score) / \(totalQuestions) 問正解")
                         .font(.system(size: 28, weight: .medium))
                         .foregroundStyle(Color(.white))
+                    
+                    //点数によるコメント
+                    Text(resultMessage)
+                        .font(.system(size: 24, weight: .medium))
+                        .foregroundStyle(Color(.white))
+                        .multilineTextAlignment(.center)
+                        .padding(.top, 10)
                 }
                 
                 Spacer()
@@ -44,6 +51,21 @@ struct ResultView: View {
                 
             }
             .padding()
+        }
+    }
+
+    //FBコメント機能
+    var resultMessage: String {
+        let percentage = Double(score) / Double(totalQuestions)
+        
+        if percentage == 1.0 {
+            return "素晴らしい！\n全問正解です！"
+        } else if percentage >= 0.8 {
+            return "お見事！\nあと1問で全問正解でしたね！"
+        } else if percentage >= 0.5 {
+            return "よくできました！\nさらに知識を深めましょう！"
+        } else {
+            return "ドンマイ！\nもう一度チャレンジしてみよう！"
         }
     }
 }
